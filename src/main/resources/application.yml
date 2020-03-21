@@ -1,0 +1,7 @@
+server:
+    port: 8888
+    ssl:
+        key-store: classpath:keystore.jks
+        key-store-password: changeit
+        key-password: changeit
+        enabled-protocols: TLSv1.2
