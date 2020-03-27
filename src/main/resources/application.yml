@@ -1,7 +1,7 @@
 server:
-    port: 8888
+    port: --set me--
     ssl:
-        key-store: classpath:keystore.jks
-        key-store-password: changeit
-        key-password: changeit
+        key-store: --set me--
+        key-store-password: --set me--
+        key-password: --set me--
         enabled-protocols: TLSv1.2
