@@ -13,7 +13,7 @@
       </div>
       
       <div class="float-right pr-4">
-	      <a class="btn btn-outline-secondary" href="/application/notes/new">New</a>
+	      <a class="btn btn-primary" href="/application/notes/new">New</a>
       </div>
           
       <div class="table-responsive p-4">

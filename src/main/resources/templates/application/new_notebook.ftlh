@@ -14,7 +14,7 @@
       
       <div class="table-responsive p-4">
 
-		New notebook
+		new notebook
 		
       </div>
     </main>
