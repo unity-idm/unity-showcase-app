@@ -1,3 +1,8 @@
+/**************************************************************************
+ *            Copyright (c) 2020 Bixbit - Krzysztof Benedyczak. 
+ *                         All rights reserved.
+ *                 See LICENCE file for licensing information.
+ **************************************************************************/
 package io.imunity.cloud.showcase;
 
 import org.springframework.stereotype.Controller;
@@ -18,10 +23,10 @@ public class MVCController
 		return "pricing";
 	}
 
-	@RequestMapping("/tenant-selection")
+	@RequestMapping("/select-subscription")
 	public String selectTenant()
 	{
-		return "tenant-selection";
+		return "select_subscription";
 	}
 
 	@RequestMapping("/application")
@@ -70,7 +75,7 @@ public class MVCController
 	public String applicationNew(Model model)
 	{
 		setNavigationItem(model, NavigationItem.NEW_NOTEBOOK);
-		return "application/new_notebook";
+		return "application/new_subscription";
 	}
 
 	private void setNavigationItem(Model model, NavigationItem selected)

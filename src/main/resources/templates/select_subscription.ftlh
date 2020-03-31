@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Tenant selection</title>
+    <title>Select subscription</title>
 
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
 
@@ -17,7 +17,7 @@
   <body class="text-center">
     <form class="form-signin" action="/application" method="post">
       <img class="mb-4" src="/images/logo.png" alt="" width="70">
-      <h1 class="h3 mb-3 font-weight-normal">Select tenant</h1>
+      <h1 class="h3 mb-3 font-weight-normal">Select subscription</h1>
 
       <select class="form-control mb-4" id="tenant" autofocus required>
           <option>Work</option>

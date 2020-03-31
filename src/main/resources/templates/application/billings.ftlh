@@ -20,6 +20,10 @@
       <table class="table-sm table-borderless">
       	<tbody>
       		<tr>
+      			<td class="align-middle">Ownwer:</td>
+      			<td class="align-middle">Company Name</td>
+      		</tr>
+      		<tr>
       		    <td class="align-middle">Subscription is Active</td>
       			<td class="align-middle"><a class="btn btn-sm btn-outline-secondary" href="#">Cancel</a></td>
       		</tr>
@@ -45,7 +49,7 @@
       </table>
       
 
-      <div class="row pt-3">
+      <div class="row pt-0">
 		<h4>Invoices</h4>
       </div>
       <table class="table-sm table-borderless">

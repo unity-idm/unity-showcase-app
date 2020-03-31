@@ -29,34 +29,34 @@
           </thead>
           <tbody>
             <tr>
-              <td>xyx1@at.org</td>
-              <td>
-				<select class="">
+              <td class="align-middle">xyx1@at.org</td>
+              <td class="align-middle">
+				<select class="custom-select col-md-4">
 		          <option>Admin</option>
 		          <option>Regular</option>
 				</select>
               </td>
-              <td>delete</td>
+              <td class="align-middle">delete</td>
             </tr>
             <tr>
-              <td>xyx2@at.org</td>
-              <td>
-				<select class="">
+              <td class="align-middle">xyx2@at.org</td>
+              <td class="align-middle">
+				<select class="custom-select col-md-4">
 		          <option>Admin</option>
 		          <option>Regular</option>
 				</select>
               </td>
-              <td>delete</td>
+              <td class="align-middle">delete</td>
             </tr>
             <tr>
-              <td>xyx3@at.org</td>
-              <td>
-				<select class="">
+              <td class="align-middle">xyx3@at.org</td>
+              <td class="align-middle">
+				<select class="custom-select col-md-4">
 		          <option>Admin</option>
 		          <option>Regular</option>
 				</select>
               </td>
-              <td>delete</td>
+              <td class="align-middle">delete</td>
             </tr>
           </tbody>
         </table>

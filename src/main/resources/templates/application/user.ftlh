@@ -20,7 +20,7 @@
 		    <input type="text" class="form-control" id="firstName">
 		  </div>
 		  <div class="col form-group">
-		    <label for="lastName">First name</label>
+		    <label for="lastName">Last name</label>
 		    <input type="text" class="form-control" id="lastName">
 		  </div>
 		  <div class="col">

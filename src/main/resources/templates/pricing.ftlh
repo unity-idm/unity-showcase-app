@@ -17,13 +17,13 @@
   <body>
 
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-      <h5 class="my-0 mr-md-auto font-weight-normal"><img class="mb-2" src="/images/tonote1.png" alt="" width="200"></h5>
+      <h5 class="my-0 mr-md-auto font-weight-normal"><img class="mb-2" src="/images/tonote.png" alt="" width="200"></h5>
        
       <nav class="my-2 my-md-0 mr-md-3">
         <a class="p-2 text-dark" href="#">Features</a>
         <a class="p-2 text-dark" href="#">Pricing</a>
       </nav>
-      <a class="btn btn-outline-primary" href="/tenant-selection">Sign up</a>
+      <a class="btn btn-outline-primary" href="/select-subscription">Sign up</a>
     </div>
 
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
@@ -47,7 +47,7 @@
               <li>Small price</li>
               <li>Help center access</li>
             </ul>
-            <a class="btn btn-lg btn-block btn-primary" href="/tenant-selection">Get started</a>
+            <a class="btn btn-lg btn-block btn-primary" href="/select-subscription">Get started</a>
           </div>
         </div>
         <div class="card mb-4 box-shadow">
@@ -61,7 +61,7 @@
               <li>Possibility to use colors</li>
               <li>Help center access</li>
             </ul>
-            <a class="btn btn-lg btn-block btn-primary" href="/tenant-selection">Get started</a>
+            <a class="btn btn-lg btn-block btn-primary" href="/select-subscription">Get started</a>
           </div>
         </div>
       </div>

@@ -1,3 +1,8 @@
+/**************************************************************************
+ *            Copyright (c) 2020 Bixbit - Krzysztof Benedyczak. 
+ *                         All rights reserved.
+ *                 See LICENCE file for licensing information.
+ **************************************************************************/
 package io.imunity.cloud.showcase;
 
 import org.springframework.boot.SpringApplication;
