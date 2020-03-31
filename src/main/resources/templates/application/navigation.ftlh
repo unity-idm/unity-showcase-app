@@ -28,7 +28,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link <#if selected_nav == "NEW_NOTEBOOK">active</#if>" href="/application/new">
-              New notebook
+              New tenant
             </a>
           </li>
         </ul>

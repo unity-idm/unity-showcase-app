@@ -12,9 +12,54 @@
         <#include "logout.ftlh">
       </div>
       
+		<div class="input-group float-right col-md-4 pr-4 pl-4">
+		  <input type="text" class="form-control" placeholder="email" aria-label="Recipient's username" aria-describedby="button-addon2">
+		  <div class="input-group-append">
+		    <button class="btn btn-primary" type="button" id="button-addon2">Invite</button>
+		  </div>
+		</div>
       <div class="table-responsive p-4">
-
-		Users
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>xyx1@at.org</td>
+              <td>
+				<select class="">
+		          <option>Admin</option>
+		          <option>Regular</option>
+				</select>
+              </td>
+              <td>delete</td>
+            </tr>
+            <tr>
+              <td>xyx2@at.org</td>
+              <td>
+				<select class="">
+		          <option>Admin</option>
+		          <option>Regular</option>
+				</select>
+              </td>
+              <td>delete</td>
+            </tr>
+            <tr>
+              <td>xyx3@at.org</td>
+              <td>
+				<select class="">
+		          <option>Admin</option>
+		          <option>Regular</option>
+				</select>
+              </td>
+              <td>delete</td>
+            </tr>
+          </tbody>
+        </table>
 		
       </div>
     </main>

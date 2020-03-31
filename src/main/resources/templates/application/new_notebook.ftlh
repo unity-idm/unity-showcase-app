@@ -14,7 +14,7 @@
       
       <div class="table-responsive p-4">
 
-		new notebook
+         <button type="submit" class="btn btn-primary">New tenant</button>
 		
       </div>
     </main>
