@@ -6,17 +6,11 @@
 package io.imunity.cloud.showcase;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class MVCController
 {
-	public enum NavigationItem
-	{
-		NOTES, USER_PROFILE, BILLINGS, USERS, NEW_NOTEBOOK
-	}
-
 	@RequestMapping("/")
 	public String main()
 	{
@@ -30,56 +24,44 @@ public class MVCController
 	}
 
 	@RequestMapping("/application")
-	public String application(Model model)
+	public String application()
 	{
-		setNavigationItem(model, NavigationItem.NOTES);
 		return "application/notes";
 	}
 
 	@RequestMapping("/application/notes")
-	public String applicationNotes(Model model)
+	public String applicationNotes()
 	{
-		setNavigationItem(model, NavigationItem.NOTES);
 		return "application/notes";
 	}
 
 	@RequestMapping("/application/notes/new")
-	public String applicationNotesNew(Model model)
+	public String applicationNotesNew()
 	{
-		setNavigationItem(model, NavigationItem.NOTES);
 		return "application/notes_new";
 	}
 
 	@RequestMapping("/application/user")
-	public String applicationUser(Model model)
+	public String applicationUser()
 	{
-		setNavigationItem(model, NavigationItem.USER_PROFILE);
 		return "application/user";
 	}
 	
 	@RequestMapping("/application/billings")
-	public String applicationBillings(Model model)
+	public String applicationBillings()
 	{
-		setNavigationItem(model, NavigationItem.BILLINGS);
 		return "application/billings";
 	}
 	
 	@RequestMapping("/application/users")
-	public String applicationUsers(Model model)
+	public String applicationUsers()
 	{
-		setNavigationItem(model, NavigationItem.USERS);
 		return "application/users";
 	}
 	
 	@RequestMapping("/application/new")
-	public String applicationNew(Model model)
+	public String applicationNew()
 	{
-		setNavigationItem(model, NavigationItem.NEW_NOTEBOOK);
 		return "application/new_subscription";
-	}
-
-	private void setNavigationItem(Model model, NavigationItem selected)
-	{
-		model.addAttribute("selected_nav", selected);
 	}
 }

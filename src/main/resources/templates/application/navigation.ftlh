@@ -7,27 +7,27 @@
           	</div>
           </li>
           <li class="nav-item">
-            <a class="nav-link <#if selected_nav == "NOTES">active</#if>" href="/application/notes">
+            <a class="nav-link <#if nav_selection == "notes">active</#if>" href="/application/notes">
               Notes
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <#if selected_nav == "USER_PROFILE">active</#if>" href="/application/user">
+            <a class="nav-link <#if nav_selection == "userProfile">active</#if>" href="/application/user">
               User profile
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <#if selected_nav == "BILLINGS">active</#if>" href="/application/billings">
+            <a class="nav-link <#if nav_selection == "billings">active</#if>" href="/application/billings">
               Billings
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <#if selected_nav == "USERS">active</#if>" href="/application/users">
+            <a class="nav-link <#if nav_selection == "users">active</#if>" href="/application/users">
               Users
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <#if selected_nav == "NEW_NOTEBOOK">active</#if>" href="/application/new">
+            <a class="nav-link <#if nav_selection == "newSubscription">active</#if>" href="/application/new">
               New subscription
             </a>
           </li>
