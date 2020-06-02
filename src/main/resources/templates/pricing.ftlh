@@ -23,7 +23,7 @@
         <a class="p-2 text-dark" href="#">Features</a>
         <a class="p-2 text-dark" href="#">Pricing</a>
       </nav>
-      <a class="btn btn-outline-primary" href="/select-subscription">Sign up</a>
+      <a class="btn btn-outline-primary" href="${registrationUrl}">Sign up</a>
     </div>
 
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
@@ -47,7 +47,7 @@
               <li>Small price</li>
               <li>Help center access</li>
             </ul>
-            <a class="btn btn-lg btn-block btn-primary" href="/select-subscription">Get started</a>
+            <a class="btn btn-lg btn-block btn-primary" href="${registrationUrl}">Get started</a>
           </div>
         </div>
         <div class="card mb-4 box-shadow">
@@ -61,7 +61,7 @@
               <li>Possibility to use colors</li>
               <li>Help center access</li>
             </ul>
-            <a class="btn btn-lg btn-block btn-primary" href="/select-subscription">Get started</a>
+            <a class="btn btn-lg btn-block btn-primary" href="${registrationUrl}">Get started</a>
           </div>
         </div>
       </div>

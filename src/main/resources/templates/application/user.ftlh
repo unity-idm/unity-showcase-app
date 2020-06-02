@@ -13,22 +13,40 @@
         <#include "logout.ftlh">
       </div>
       
-      <div class="row p-4">
-
-		<form>
-		  <div class="col form-group">
-		    <label for="firstName">First name</label>
-		    <input type="text" class="form-control" id="firstName">
+      <#if updated??>
+      		 <div class="alert alert-success" role="alert">Profile updated</div>
+      </#if>
+      
+      <div class="row p-4">		
+<#--		<form>
+		  <#list attributes?keys as attr>
+			  <div class="form-group mb-2">
+		 	  	<label  >${attr}: ${attributes[attr]}</label> 
+          </#list>
+		</form>
+-->	
+		<form action="/application/user" method="post">
+		   <div class="form-group">
+		    <label for="firstname">Firstname</label>
+		    <input class="form-control" id="title" type="text" name="firstname" value="${(firstname)!''}" />
 		  </div>
-		  <div class="col form-group">
-		    <label for="lastName">Last name</label>
-		    <input type="text" class="form-control" id="lastName">
+		  
+		  <div class="form-group">
+		    <label for="surname">Surname</label>
+		    <input class="form-control" id="title" type="text" name="surname" value="${(surname)!''}" />
 		  </div>
-		  <div class="col">
-             <button type="submit" class="btn btn-primary">Update</button>
+		 
+		 <div class="form-group">
+		    <label for="email">Email</label>
+		    <input class="form-control" id="title" type="text" name="email" value="${(email)!''}" disabled/>
+		  </div>
+		 
+		  <div class="form-group row">
+		    <div class="col-sm-10">
+		      <button type="submit" class="btn btn-sm btn-primary">Update</button>
+		    </div>
 		  </div>
 		</form>
-		
       </div>
     </main>
   </div>

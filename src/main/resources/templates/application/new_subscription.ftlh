@@ -14,9 +14,7 @@
       </div>
       
       <div class="table-responsive p-4">
-
-         <button type="submit" class="btn btn-primary">New</button>
-		
+		<a class="btn btn btn-primary" href="${registrationUrl}">Register new subscription</a>	
       </div>
     </main>
   </div>

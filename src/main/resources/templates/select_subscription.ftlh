@@ -15,14 +15,14 @@
   </head>
 
   <body class="text-center">
-    <form class="form-signin" action="/application" method="post">
+    <form class="form-signin" action="/select-subscription" method="post">
       <img class="mb-4" src="/images/logo.png" alt="" width="70">
       <h1 class="h3 mb-3 font-weight-normal">Select subscription</h1>
 
-      <select class="form-control mb-4" id="tenant" autofocus required>
-          <option>Work</option>
-          <option>Family</option>
-          <option>Private</option>
+      <select name="subscription" class="form-control mb-4" id="tenant" autofocus required">
+        <#list subs?keys as sub>
+            <option value="${sub}">${subs[sub]}</option>
+        </#list>
       </select>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Continue</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2020</p>

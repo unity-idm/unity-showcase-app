@@ -12,53 +12,39 @@
         <h1 class="h2">Users</h1>
         <#include "logout.ftlh">
       </div>
-      
+      	
+      	<#if invitationEmail??>
+      		 <div class="alert alert-success" role="alert">Invitation successfull send to ${invitationEmail}</div>
+      	</#if>
+      	 
+      	 
+		<form action="/application/user/invite" method="post">
 		<div class="input-group float-right col-md-4 pr-4 pl-4">
-		  <input type="text" class="form-control" placeholder="email" aria-label="Recipient's username" aria-describedby="button-addon2">
+		  <input path="email" type="text" name="email" class="form-control" placeholder="email" aria-label="Recipient's username" aria-describedby="button-addon2">
 		  <div class="input-group-append">
-		    <button class="btn btn-primary" type="button" id="button-addon2">Invite</button>
+		    <button class="btn btn-primary" type="submit" id="button-addon2">Invite</button>
 		  </div>
 		</div>
+		</form>
       <div class="table-responsive p-4">
         <table class="table table-striped table-sm">
           <thead>
             <tr>
+              <th>Name</th>
               <th>Email</th>
-              <th>Role</th>
+              <th>Admin</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="align-middle">xyx1@at.org</td>
-              <td class="align-middle">
-				<select class="custom-select col-md-4">
-		          <option>Admin</option>
-		          <option>Regular</option>
-				</select>
-              </td>
-              <td class="align-middle">delete</td>
-            </tr>
-            <tr>
-              <td class="align-middle">xyx2@at.org</td>
-              <td class="align-middle">
-				<select class="custom-select col-md-4">
-		          <option>Admin</option>
-		          <option>Regular</option>
-				</select>
-              </td>
-              <td class="align-middle">delete</td>
-            </tr>
-            <tr>
-              <td class="align-middle">xyx3@at.org</td>
-              <td class="align-middle">
-				<select class="custom-select col-md-4">
-		          <option>Admin</option>
-		          <option>Regular</option>
-				</select>
-              </td>
-              <td class="align-middle">delete</td>
-            </tr>
+           	 <#list users as user>
+           	 <tr>
+              <td class="align-middle">${user.name}</td>
+              <td class="align-middle">${user.email}</td>
+              <td class="align-middle">${user.admin?string("yes", "no")}</td>
+              <td class="align-middle"><a href="${'/application/user/' + user.id + '/delete'}">Delete</a></td>
+             </tr>
+            </#list>
           </tbody>
         </table>
 		
