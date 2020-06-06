@@ -1,7 +1,0 @@
-server:
-    port: --set me--
-    ssl:
-        key-store: --set me--
-        key-store-password: --set me--
-        key-password: --set me--
-        enabled-protocols: TLSv1.2

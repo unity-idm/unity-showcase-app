@@ -21,11 +21,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import io.imunity.cloud.showcase.rest.UnityRestClient;
-import io.imunity.cloud.showcase.rest.UnityRestClient.SubscriptionDetails;
-import io.imunity.cloud.showcase.rest.UnityRestClient.SubscriptionUser;
+import io.imunity.cloud.showcase.rest.types.TenantDetails;
+import io.imunity.cloud.showcase.rest.types.TenantUser;
 
 @Component
-public class SecurityContextUpdater
+public class InvocationContextUpdater
 {
 	@Autowired
 	private InvocationContext context;
@@ -35,9 +35,10 @@ public class SecurityContextUpdater
 	
 	public void updateSecurityContext(Authentication authentication, String subscription)
 	{
-		SubscriptionDetails subscriptionFull = unityRestClient.getSubscriptionDetails(subscription);
-		context.setSubscritpion(subscriptionFull);
+		TenantDetails subscriptionFull = unityRestClient.getSubscriptionDetails(subscription);
+		context.setSubscription(subscriptionFull);
 		context.setUserId(getUserId(authentication));
+		
 		List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authentication.getAuthorities());
 		if (subscriptionFull.isPremium())
 		{
@@ -47,7 +48,7 @@ public class SecurityContextUpdater
 			updatedAuthorities.remove(new SimpleGrantedAuthority(SecurityConfig.PREMIUM_AUTHORITY));
 		}
 
-		Optional<SubscriptionUser> usr = unityRestClient.getUser(subscription, getUserId(authentication));
+		Optional<TenantUser> usr = unityRestClient.getUser(subscription, getUserId(authentication));
 		if (usr.isPresent() && usr.get().isAdmin())
 		{
 			updatedAuthorities.add(new SimpleGrantedAuthority(SecurityConfig.ADMIN_AUTHORITY));
@@ -56,7 +57,7 @@ public class SecurityContextUpdater
 			updatedAuthorities.remove(new SimpleGrantedAuthority(SecurityConfig.ADMIN_AUTHORITY));
 		}
 		
-		if (subscriptionFull.getStatus().equals("ACTIVE"))
+		if (subscriptionFull.details.getStatus().equals(Constans.ACTIVE_SUBSCRIPTION))
 		{
 			updatedAuthorities.add(new SimpleGrantedAuthority(SecurityConfig.ACTIVE_ACCOUNT_AUTHORITY));
 		}else

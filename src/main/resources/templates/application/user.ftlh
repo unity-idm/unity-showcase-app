@@ -16,15 +16,7 @@
       <#if updated??>
       		 <div class="alert alert-success" role="alert">Profile updated</div>
       </#if>
-      
       <div class="row p-4">		
-<#--		<form>
-		  <#list attributes?keys as attr>
-			  <div class="form-group mb-2">
-		 	  	<label  >${attr}: ${attributes[attr]}</label> 
-          </#list>
-		</form>
--->	
 		<form action="/application/user" method="post">
 		   <div class="form-group">
 		    <label for="firstname">Firstname</label>

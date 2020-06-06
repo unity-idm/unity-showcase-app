@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	{
 		http.authorizeRequests(a -> a
 				.antMatchers("/", "/favicon.ico", "/login", "/logout/**", "/pricing", "/error",
-						"/webjars/**", "/access_denied")
+						"/webjars/**", "/access_denied", "/images/**", "/css/**")
 				.permitAll().anyRequest().authenticated()).oauth2Login().loginPage("/login")
 				.successHandler(successHandler()).and().logout().logoutSuccessUrl("/login").and()
 				.exceptionHandling().accessDeniedPage("/access_denied").and().csrf().disable().headers()

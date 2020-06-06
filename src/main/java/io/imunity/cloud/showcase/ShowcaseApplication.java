@@ -17,15 +17,14 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 @SpringBootApplication
 public class ShowcaseApplication
 {
-	
 	public ShowcaseApplication(FreeMarkerConfigurer freeMarkerConfigurer)
 	{
-		 freeMarkerConfigurer.getTaglibFactory().setClasspathTlds(Arrays.asList("/META-INF/security.tld"));
+		freeMarkerConfigurer.getTaglibFactory().setClasspathTlds(Arrays.asList("/META-INF/security.tld"));
 	}
-	
+
 	public static void main(String[] args)
 	{
-		
+
 		SpringApplication.run(ShowcaseApplication.class, args);
 	}
 }

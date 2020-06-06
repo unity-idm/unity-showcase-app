@@ -9,13 +9,13 @@ package io.imunity.cloud.showcase;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
-import io.imunity.cloud.showcase.rest.UnityRestClient.SubscriptionDetails;
+import io.imunity.cloud.showcase.rest.types.TenantDetails;
 
 @Component
 @SessionScope
 public class InvocationContext
 {
-	private SubscriptionDetails subscritpion;
+	private TenantDetails subscription;
 	private String userId;
 	
 	public InvocationContext()
@@ -23,14 +23,14 @@ public class InvocationContext
 		
 	}
 
-	public SubscriptionDetails getSubscritpion()
+	public TenantDetails getSubscription()
 	{
-		return subscritpion;
+		return subscription;
 	}
 
-	public void setSubscritpion(SubscriptionDetails subscritpion)
+	public void setSubscription(TenantDetails subscritpion)
 	{
-		this.subscritpion = subscritpion;
+		this.subscription = subscritpion;
 	}
 
 	public String getUserId()
@@ -42,4 +42,9 @@ public class InvocationContext
 	{
 		this.userId = userId;
 	}	
+	
+	public String getSubscriptionId()
+	{
+		return subscription.tenant.id;
+	}
 }

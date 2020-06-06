@@ -29,32 +29,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import io.imunity.cloud.showcase.notes.Note;
 import io.imunity.cloud.showcase.notes.NoteManagement;
 import io.imunity.cloud.showcase.rest.UnityRestClient;
-import io.imunity.cloud.showcase.rest.UnityRestClient.SubscriptionUser;
+import io.imunity.cloud.showcase.rest.types.TenantUser;
 
 @Controller
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@SessionAttributes({ "context" })
 public class MVCController
 {
 	private static final String REQUEST_URL = "URL_PRIOR_LOGIN";
 	private static final String SPRING_SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
 
-	@Value("${unity.tenantAdminRegistrationForm}")
-	private String unityTenantAdminRegistrationForm;
+	@Value("${unity.tenantAdminRegistrationUrl}")
+	private String unityTenantAdminRegistrationUrl;
 
-	@Value("${unity.updatePaymentMethodUrl}")
-	private String unityUpdatePaymentMethodUrl;
+	@Value("${unity.baseurl}")
+	private String unityBaseUrl;
 
-	@Value("${unity.updateSubscriptionUrl}")
-	private String unityUpdateSubscriptionUrl;
-
-	@Value("${unity.newSubscriptionUrl}")
-	private String unityNewSubscriptionUrl;
+	@Value("${unity.tenantEndpoint}")
+	private String tenantEndpoint;
 
 	@Autowired
 	private UnityRestClient unityRestClient;
@@ -66,29 +65,35 @@ public class MVCController
 	private InvocationContext context;
 
 	@Autowired
-	private SecurityContextUpdater secContextUpdater;
+	private InvocationContextUpdater secContextUpdater;
 
 	@RequestMapping("/")
 	public String main(Model model)
 	{
-		model.addAttribute("registrationUrl", unityTenantAdminRegistrationForm);
-		return "pricing";
+		if (context.getSubscription() == null)
+		{
+			model.addAttribute("registrationUrl", unityTenantAdminRegistrationUrl);
+			return "pricing";
+		} else
+		{
+			return "redirect:application/notes";
+		}
 	}
 
 	@RequestMapping(value = "/select-subscription", method = RequestMethod.GET)
 	public String selectSubscription(Authentication authentication, Model model, HttpServletRequest request)
 	{
-		if (context.getSubscritpion() != null)
+		if (context.getSubscription() != null)
 		{
 			return "redirect:application/notes";
 		}
 
 		Map<String, String> subscriptions = unityRestClient
-				.getSubscriptions(SecurityContextUpdater.getUserId(authentication));
+				.getSubscriptions(InvocationContextUpdater.getUserId(authentication));
 
 		if (subscriptions.size() == 0)
 		{
-			return "redirect:" + unityTenantAdminRegistrationForm;
+			return "redirect:" + unityBaseUrl + "/" + tenantEndpoint + Constans.SIGNUP_PATH;
 		}
 
 		if (subscriptions.size() == 1)
@@ -109,6 +114,7 @@ public class MVCController
 		return "redirect:" + (urlPriorLogin != null ? urlPriorLogin : "/application/notes");
 	}
 
+	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
 	@RequestMapping("/application")
 	public String application()
 	{
@@ -119,7 +125,7 @@ public class MVCController
 	@RequestMapping("/application/notes")
 	public String applicationNotes(Model model)
 	{
-		model.addAttribute("notes", noteMan.getNotes(context.getSubscritpion().getId(), context.getUserId()));
+		model.addAttribute("notes", noteMan.getNotes(context.getSubscriptionId(), context.getUserId()));
 		return "application/notes";
 	}
 
@@ -138,7 +144,7 @@ public class MVCController
 	public String addNote(Model model, @ModelAttribute("note") Note note)
 	{
 		note.setOwnerId(context.getUserId());
-		note.setSubscriptionId(context.getSubscritpion().getId());
+		note.setSubscriptionId(context.getSubscription().tenant.id);
 		try
 		{
 			noteMan.addNote(note);
@@ -180,7 +186,7 @@ public class MVCController
 		note.setOwnerId(context.getUserId());
 		try
 		{
-			note.setSubscriptionId(context.getSubscritpion().getId());
+			note.setSubscriptionId(context.getSubscriptionId());
 			noteMan.updateNote(note);
 		} catch (Exception ex)
 		{
@@ -210,7 +216,7 @@ public class MVCController
 	@RequestMapping(value = { "/application/user/{userId}/delete" })
 	public String applicationUser(Model model, @PathVariable String userId)
 	{
-		unityRestClient.deleteUser(context.getSubscritpion().getId(), userId);
+		unityRestClient.deleteUser(context.getSubscription().tenant.id, userId);
 		return "redirect:/application/users";
 	}
 
@@ -220,37 +226,46 @@ public class MVCController
 			@RequestParam("updateStatus") Optional<String> update,
 			@RequestParam("updatePaymentMethodStatus") Optional<String> updatePaymentMethod)
 	{
+
+		String id = context.getSubscriptionId();
+
 		if (!updatePaymentMethod.isEmpty() || !update.isEmpty())
 		{
-			secContextUpdater.updateSecurityContext(authentication, context.getSubscritpion().getId());
+			secContextUpdater.updateSecurityContext(authentication, id);
 		}
 
-		model.addAttribute("updateUrl",
-				unityUpdatePaymentMethodUrl + "?tenantId=" + context.getSubscritpion().getId());
-		model.addAttribute("upgradeUrl",
-				unityUpdateSubscriptionUrl + "?tenantId=" + context.getSubscritpion().getId());
-		model.addAttribute("subscription", context.getSubscritpion());
-		model.addAttribute("owner", unityRestClient
-				.getUser(context.getSubscritpion().getId(), context.getSubscritpion().getCreatorId())
-				.get());
-		model.addAttribute("invoices", unityRestClient.getInvoices(context.getSubscritpion().getId()));
+		model.addAttribute("updateUrl",  unityBaseUrl + "/" + tenantEndpoint + Constans.PAYMENT_METHOD_UPDATE_PATH + "?tenantId=" + id);
+		model.addAttribute("upgradeUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SUBSCRIPTION_UPDATE_PATH + "?tenantId=" + id);
+		model.addAttribute("owner",
+				unityRestClient.getUser(id, context.getSubscription().tenant.creatorId).get());
+		model.addAttribute("invoices", unityRestClient.getInvoices(id));
 
 		return "application/billings";
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
 	@PostMapping("/application/subscription/cancel")
-	public String cancelSubscription(HttpServletRequest request, HttpServletResponse response)
+	public String cancelSubscription(Authentication authentication)
 	{
-		unityRestClient.cancelSubscription(context.getSubscritpion().getId());
-		return logout(request, response);
+		unityRestClient.cancelSubscription(context.getSubscriptionId());
+		secContextUpdater.updateSecurityContext(authentication, context.getSubscriptionId());
+		return "redirect:/application/billings";
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
+	@PostMapping("/application/subscription/renew")
+	public String renewSubscription(Authentication authentication)
+	{
+		unityRestClient.renewSubscription(context.getSubscription().tenant.id);
+		secContextUpdater.updateSecurityContext(authentication, context.getSubscriptionId());
+		return "redirect:/application/billings";
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
 	@RequestMapping("/application/users")
 	public String applicationUsers(Model model)
 	{
-		model.addAttribute("users", unityRestClient.getUsers(context.getSubscritpion().getId()));
+		model.addAttribute("users", unityRestClient.getUsers(context.getSubscriptionId()));
 		return "application/users";
 	}
 
@@ -258,7 +273,7 @@ public class MVCController
 	@PostMapping("/application/user/invite")
 	public RedirectView applicationUserInvite(String email, RedirectAttributes redir)
 	{
-		unityRestClient.addInvitation(email);
+		unityRestClient.addInvitation(email, context.getSubscription().tenant.group);
 		RedirectView redirectView = new RedirectView("/application/users", true);
 		redir.addFlashAttribute("invitationEmail", email);
 		return redirectView;
@@ -268,8 +283,7 @@ public class MVCController
 	@RequestMapping("/application/user")
 	public String applicationUser(Model model)
 	{
-		SubscriptionUser usr = unityRestClient.getUser(context.getSubscritpion().getId(), context.getUserId())
-				.orElse(null);
+		TenantUser usr = unityRestClient.getUser(context.getSubscriptionId(), context.getUserId()).orElse(null);
 		if (usr != null)
 		{
 			model.addAttribute("firstname", usr.getFirstname());
@@ -283,9 +297,8 @@ public class MVCController
 	@PostMapping("/application/user")
 	public RedirectView applicationUserUpdate(String firstname, String surname, RedirectAttributes redir)
 	{
-		unityRestClient.updateStringRootAttribute(context.getUserId(), UnityRestClient.FIRSTNAME_ATTR,
-				firstname);
-		unityRestClient.updateStringRootAttribute(context.getUserId(), UnityRestClient.SURNAME_ATTR, surname);
+		unityRestClient.updateStringRootAttribute(context.getUserId(), Constans.FIRSTNAME_ATTR, firstname);
+		unityRestClient.updateStringRootAttribute(context.getUserId(), Constans.SURNAME_ATTR, surname);
 		redir.addFlashAttribute("updated", true);
 		RedirectView redirectView = new RedirectView("/application/user", true);
 		return redirectView;
@@ -294,7 +307,7 @@ public class MVCController
 	@RequestMapping("/application/new")
 	public String applicationNew(Model model)
 	{
-		model.addAttribute("registrationUrl", unityNewSubscriptionUrl);
+		model.addAttribute("registrationUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SIGNUP_PATH);
 		return "application/new_subscription";
 	}
 
@@ -323,6 +336,17 @@ public class MVCController
 	@RequestMapping("/access_denied")
 	public String handleError(Model model)
 	{
+		if (context.getSubscription() == null)
+		{
+			return "redirect:/select-subscription";
+		}
+
 		return "access_denied";
+	}
+
+	@ModelAttribute("context")
+	public InvocationContext populateInvocationContext()
+	{
+		return context;
 	}
 }

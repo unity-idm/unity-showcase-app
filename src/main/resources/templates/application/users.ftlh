@@ -7,17 +7,13 @@
 	<#include "navigation.ftlh">
 	
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 p-0">
-    
       <div class="p-4 d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Users</h1>
         <#include "logout.ftlh">
-      </div>
-      	
+      </div>	
       	<#if invitationEmail??>
       		 <div class="alert alert-success" role="alert">Invitation successfull send to ${invitationEmail}</div>
       	</#if>
-      	 
-      	 
 		<form action="/application/user/invite" method="post">
 		<div class="input-group float-right col-md-4 pr-4 pl-4">
 		  <input path="email" type="text" name="email" class="form-control" placeholder="email" aria-label="Recipient's username" aria-describedby="button-addon2">
@@ -46,8 +42,7 @@
              </tr>
             </#list>
           </tbody>
-        </table>
-		
+        </table>	
       </div>
     </main>
   </div>

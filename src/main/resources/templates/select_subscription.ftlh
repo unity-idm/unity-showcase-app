@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
 
     <!-- Custom styles for this template -->
-    <link href="/css/tenant-selection.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
   </head>
 
   <body class="text-center">
