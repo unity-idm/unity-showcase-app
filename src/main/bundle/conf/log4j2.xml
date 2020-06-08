@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
  <Configuration status="DEBUG">
 <Appenders>
- <RollingFile name="SpringBootRollingFile" fileName="logs/showcase.log"
-        filePattern="logs/showcase.log-%i.gz" >
+ <RollingFile name="SpringBootRollingFile" fileName="logs/showcaseapp.log"
+        filePattern="logs/showcaseapp.log-%i.gz" >
       <PatternLayout>
     <pattern>%d{yyyy-MM-dd HH:mm:ss,SS} %-5p [%t] %-17c{2} (%13F:%L) %3x  -%X{uniqueIdentifier} %m%n</pattern>
       </PatternLayout>
