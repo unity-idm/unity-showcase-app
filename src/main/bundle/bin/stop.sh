@@ -11,7 +11,7 @@ BASE_DIR=`dirname "$BASE_DIR"`
 
 if [ -e "$PID" ]
 then
-	kill -15 `cat "$PID"`
+	kill `cat "$PID"`
 else
 	echo "No $PID file. It seems that server is not running."
 	exit
