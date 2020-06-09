@@ -14,9 +14,9 @@
 </Appenders>
 <Loggers>
    <Root level="info" additivity="false">
-  <AppenderRef ref="SpringBootRollingFile"/>
+  		<AppenderRef ref="SpringBootRollingFile"/>
    </Root>    
-   <Logger name="hello" level="DEBUG" additivity="false">
+   <Logger name="org.springframework.security" level="DEBUG" additivity="false">
      <appender-ref ref="SpringBootRollingFile" level="DEBUG"/>
    </Logger>
 </Loggers>
