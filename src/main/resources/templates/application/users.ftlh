@@ -26,7 +26,8 @@
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Firstname</th>
+              <th>Surname</th>
               <th>Email</th>
               <th>Admin</th>
               <th>Actions</th>
@@ -35,7 +36,8 @@
           <tbody>
            	 <#list users as user>
            	 <tr>
-              <td class="align-middle">${user.name}</td>
+              <td class="align-middle">${user.firstname}</td>
+              <td class="align-middle">${user.surname}</td>
               <td class="align-middle">${user.email}</td>
               <td class="align-middle">${user.admin?string("yes", "no")}</td>
               <td class="align-middle"><a href="${'/application/user/' + user.id + '/delete'}">Delete</a></td>

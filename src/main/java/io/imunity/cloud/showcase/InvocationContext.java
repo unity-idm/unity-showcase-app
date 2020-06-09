@@ -10,13 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import io.imunity.cloud.showcase.rest.types.TenantDetails;
+import io.imunity.cloud.showcase.rest.types.TenantUser;
 
 @Component
 @SessionScope
 public class InvocationContext
 {
 	private TenantDetails subscription;
-	private String userId;
+	private TenantUser user;
 	
 	public InvocationContext()
 	{
@@ -33,18 +34,23 @@ public class InvocationContext
 		this.subscription = subscritpion;
 	}
 
-	public String getUserId()
+	public TenantUser getUser()
 	{
-		return userId;
+		return user;
 	}
 
-	public void setUserId(String userId)
+	public void setUser(TenantUser user)
 	{
-		this.userId = userId;
+		this.user = user;
 	}	
 	
 	public String getSubscriptionId()
 	{
 		return subscription.tenant.id;
+	}
+	
+	public String getUserId()
+	{
+		return user.getId();
 	}
 }
