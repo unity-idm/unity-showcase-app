@@ -21,9 +21,10 @@
                   </tr>
                   <tr>
                      <td class="align-middle">Status:</td>
-                     <td class="align-middle"><b> ${context.subscription.details.status}</b></td>
+                     <td class="align-middle"><b> ${context.subscription.details.status} </b>
                      <@security.authorize access="hasAuthority('ACTIVE_ACCOUNT')">
-                     <#if context.subscription.details.cancelDate??>(<b>Cancels</b> at  ${(context.subscription.details.cancelDate*1000)?number_to_datetime})</#if>  
+                     <#if context.subscription.details.cancelDate??>(<b>Cancels</b> at  ${(context.subscription.details.cancelDate*1000)?number_to_datetime})</#if>
+                     </td>  
                      <td class="align-middle">
                         <form action="/application/subscription/<#if context.subscription.details.cancelDate??>renew<#else>cancel</#if>" method="post">
                            <button class="btn btn-sm btn-primary" type="submit" id="button-addon2"><#if context.subscription.details.cancelDate??>Renew<#else>Cancel</#if> subscription</button>
