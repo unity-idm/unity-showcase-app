@@ -15,7 +15,7 @@
   </head>
 
   <body class="text-center">
-    <form class="form-signin" action="/select-subscription" method="post">
+    <form class="form-signin" action="/selected-subscription" method="post">
       <img class="mb-4" src="/images/logo.png" alt="" width="70">
       <h1 class="h3 mb-3 font-weight-normal">Select subscription</h1>
 

@@ -6,6 +6,7 @@
 package io.imunity.cloud.showcase;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,6 +38,7 @@ import io.imunity.cloud.showcase.notes.Note;
 import io.imunity.cloud.showcase.notes.NoteManagement;
 import io.imunity.cloud.showcase.rest.UnityRestClient;
 import io.imunity.cloud.showcase.rest.types.TenantUser;
+import io.imunity.cloud.showcase.subscription.SubscriptionRepository;
 
 @Controller
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -62,6 +64,9 @@ public class MVCController
 	private NoteManagement noteMan;
 
 	@Autowired
+	private SubscriptionRepository subscriptionMan;
+
+	@Autowired
 	private InvocationContext context;
 
 	@Autowired
@@ -81,15 +86,19 @@ public class MVCController
 	}
 
 	@RequestMapping(value = "/select-subscription", method = RequestMethod.GET)
-	public String selectSubscription(Authentication authentication, Model model, HttpServletRequest request)
+	public String selectSubscription(Authentication authentication, Model model, HttpServletRequest request,
+			@RequestParam(value = "change") Optional<Boolean> change)
 	{
-		if (context.getSubscription() != null)
+		if ((change.isEmpty() || !change.get()) && context.getSubscription() != null)
 		{
 			return "redirect:application/notes";
 		}
 
-		Map<String, String> subscriptions = unityRestClient
-				.getSubscriptions(InvocationContextUpdater.getUserId(authentication));
+		Map<String, String> subscriptions = new HashMap<>();
+		subscriptionMan.findAll().forEach(s -> {
+			if (s.getOwnerId().equals(InvocationContextUpdater.getUserId(authentication)))
+				subscriptions.put(s.getId(), s.getName());
+		});
 
 		if (subscriptions.size() == 0)
 		{
@@ -106,7 +115,7 @@ public class MVCController
 		return "select_subscription";
 	}
 
-	@PostMapping("/select-subscription")
+	@PostMapping("/selected-subscription")
 	public String selectSubscription(Authentication authentication, String subscription, HttpServletRequest request)
 	{
 		secContextUpdater.updateSecurityContext(authentication, subscription);
@@ -234,8 +243,10 @@ public class MVCController
 			secContextUpdater.updateSecurityContext(authentication, id);
 		}
 
-		model.addAttribute("updateUrl",  unityBaseUrl + "/" + tenantEndpoint + Constans.PAYMENT_METHOD_UPDATE_PATH + "?tenantId=" + id);
-		model.addAttribute("upgradeUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SUBSCRIPTION_UPDATE_PATH + "?tenantId=" + id);
+		model.addAttribute("updateUrl", unityBaseUrl + "/" + tenantEndpoint
+				+ Constans.PAYMENT_METHOD_UPDATE_PATH + "?tenantId=" + id);
+		model.addAttribute("upgradeUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SUBSCRIPTION_UPDATE_PATH
+				+ "?tenantId=" + id);
 		model.addAttribute("owner",
 				unityRestClient.getUser(id, context.getSubscription().tenant.creatorId).get());
 		model.addAttribute("invoices", unityRestClient.getInvoices(id));
