@@ -7,6 +7,8 @@ package io.imunity.cloud.showcase;
 
 import java.util.Arrays;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -24,7 +26,7 @@ public class ShowcaseApplication
 
 	public static void main(String[] args)
 	{
-
+		HttpsURLConnection.setDefaultHostnameVerifier ((hostname, session) -> true);
 		SpringApplication.run(ShowcaseApplication.class, args);
 	}
 }
