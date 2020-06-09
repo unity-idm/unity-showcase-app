@@ -24,11 +24,11 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -81,11 +81,11 @@ public class MVCController
 			return "pricing";
 		} else
 		{
-			return "redirect:application/notes";
+			return redirect("application/notes");
 		}
 	}
 
-	@RequestMapping(value = "/select-subscription", method = RequestMethod.GET)
+	@GetMapping(value = "/select-subscription")
 	public String selectSubscription(Authentication authentication, Model model, HttpServletRequest request,
 			@RequestParam(value = "change") Optional<Boolean> change)
 	{
@@ -120,18 +120,18 @@ public class MVCController
 	{
 		secContextUpdater.updateSecurityContext(authentication, subscription);
 		String urlPriorLogin = (String) request.getSession().getAttribute(REQUEST_URL);
-		return "redirect:" + (urlPriorLogin != null ? urlPriorLogin : "/application/notes");
+		return redirect((urlPriorLogin != null ? urlPriorLogin : "/application/notes"));
 	}
 
 	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping("/application")
+	@GetMapping("/application")
 	public String application()
 	{
-		return "redirect:application/notes";
+		return redirect("application/notes");
 	}
 
 	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping("/application/notes")
+	@GetMapping("/application/notes")
 	public String applicationNotes(Model model)
 	{
 		model.addAttribute("notes", noteMan.getNotes(context.getSubscriptionId(), context.getUserId()));
@@ -139,7 +139,7 @@ public class MVCController
 	}
 
 	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping("/application/notes/new")
+	@GetMapping("/application/notes/new")
 	public String applicationNotesNew(Authentication authentication, Model model)
 	{
 		Note note = new Note();
@@ -157,7 +157,7 @@ public class MVCController
 		try
 		{
 			noteMan.addNote(note);
-			return "redirect:/application/notes";
+			return redirect("/application/notes");
 		} catch (Exception ex)
 		{
 			model.addAttribute("add", true);
@@ -167,7 +167,7 @@ public class MVCController
 	}
 
 	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping(value = { "/application/note/{noteId}/edit" })
+	@GetMapping("/application/note/{noteId}/edit")
 	public String updateNote(Model model, @PathVariable long noteId)
 	{
 		Note note = null;
@@ -207,7 +207,7 @@ public class MVCController
 	}
 
 	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping(value = { "/application/note/{noteId}/delete" })
+	@GetMapping("/application/note/{noteId}/delete")
 	public RedirectView deleteNote(Model model, @PathVariable long noteId, RedirectAttributes redir)
 	{
 		try
@@ -222,15 +222,15 @@ public class MVCController
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping(value = { "/application/user/{userId}/delete" })
+	@GetMapping("/application/user/{userId}/delete")
 	public String applicationUser(Model model, @PathVariable String userId)
 	{
 		unityRestClient.deleteUser(context.getSubscription().tenant.id, userId);
-		return "redirect:/application/users";
+		return redirect("/application/users");
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@RequestMapping("/application/billings")
+	@GetMapping("/application/billings")
 	public String applicationBillings(Authentication authentication, Model model,
 			@RequestParam("updateStatus") Optional<String> update,
 			@RequestParam("updatePaymentMethodStatus") Optional<String> updatePaymentMethod)
@@ -244,9 +244,9 @@ public class MVCController
 		}
 
 		model.addAttribute("updateUrl", unityBaseUrl + "/" + tenantEndpoint
-				+ Constans.PAYMENT_METHOD_UPDATE_PATH + "?tenantId=" + id);
+				+ Constans.PAYMENT_METHOD_UPDATE_PATH + "?" + Constans.TENANT_ID_PARAM + "=" + id);
 		model.addAttribute("upgradeUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SUBSCRIPTION_UPDATE_PATH
-				+ "?tenantId=" + id);
+				+ "?" + Constans.TENANT_ID_PARAM + "=" + id);
 		model.addAttribute("owner",
 				unityRestClient.getUser(id, context.getSubscription().tenant.creatorId).get());
 		model.addAttribute("invoices", unityRestClient.getInvoices(id));
@@ -260,7 +260,7 @@ public class MVCController
 	{
 		unityRestClient.cancelSubscription(context.getSubscriptionId());
 		secContextUpdater.updateSecurityContext(authentication, context.getSubscriptionId());
-		return "redirect:/application/billings";
+		return redirect("/application/billings");
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
@@ -269,11 +269,11 @@ public class MVCController
 	{
 		unityRestClient.renewSubscription(context.getSubscription().tenant.id);
 		secContextUpdater.updateSecurityContext(authentication, context.getSubscriptionId());
-		return "redirect:/application/billings";
+		return redirect("/application/billings");
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping("/application/users")
+	@GetMapping("/application/users")
 	public String applicationUsers(Model model)
 	{
 		model.addAttribute("users", unityRestClient.getUsers(context.getSubscriptionId()));
@@ -291,7 +291,7 @@ public class MVCController
 	}
 
 	@PreAuthorize("hasAuthority('ACTIVE_ACCOUNT')")
-	@RequestMapping("/application/user")
+	@GetMapping("/application/user")
 	public String applicationUser(Model model)
 	{
 		TenantUser usr = unityRestClient.getUser(context.getSubscriptionId(), context.getUserId()).orElse(null);
@@ -315,25 +315,25 @@ public class MVCController
 		return redirectView;
 	}
 
-	@RequestMapping("/application/new")
+	@GetMapping("/application/new")
 	public String applicationNew(Model model)
 	{
 		model.addAttribute("registrationUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SIGNUP_PATH);
 		return "application/new_subscription";
 	}
 
-	@RequestMapping("/login")
+	@GetMapping("/login")
 	public String login(Principal principal, HttpServletRequest request, HttpSession session)
 	{
 		if (principal != null)
-			return "redirect:/application/notes";
+			return redirect("/application/notes");
 		DefaultSavedRequest savedRequest = (DefaultSavedRequest) session.getAttribute(SPRING_SAVED_REQUEST);
 		if (savedRequest != null)
 			request.getSession().setAttribute(REQUEST_URL, savedRequest.getRequestURI());
 		return "login";
 	}
 
-	@RequestMapping("/logout")
+	@GetMapping("/logout")
 	public String logout(HttpServletRequest request, HttpServletResponse response)
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -344,12 +344,12 @@ public class MVCController
 		return "login";
 	}
 
-	@RequestMapping("/access_denied")
+	@GetMapping("/access_denied")
 	public String handleError(Model model)
 	{
 		if (context.getSubscription() == null)
 		{
-			return "redirect:/select-subscription";
+			return redirect("/select-subscription");
 		}
 
 		return "access_denied";
@@ -359,5 +359,10 @@ public class MVCController
 	public InvocationContext populateInvocationContext()
 	{
 		return context;
+	}
+
+	private String redirect(String to)
+	{
+		return "redirect:" + to;
 	}
 }

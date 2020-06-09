@@ -16,7 +16,7 @@
                <tbody>
                   <tr>
                      <td class="align-middle">Owner:</td>
-                     <td class="align-middle">${owner.name!""}  (${owner.email!""})</td>
+                     <td class="align-middle">${owner.firstname!""} ${owner.surname!""}  (${owner.email!""})</td>
                      <td> </td>
                   </tr>
                   <tr>

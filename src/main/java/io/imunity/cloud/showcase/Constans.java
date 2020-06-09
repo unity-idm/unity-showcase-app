@@ -22,14 +22,13 @@ public interface Constans
 	public static final String TENANT_PLAN_ATTR = "sys:client-selected-plan";
 	public static final String TENANT_NAME_ATTR = "company";
 
-	
-	
 	public static final String ACTIVE_SUBSCRIPTION = "ACTIVE";
-	
 	
 	public static final String PAYMENT_METHOD_UPDATE_PATH = "/paymentMethodUpdate";
 	public static final String SUBSCRIPTION_UPDATE_PATH = "/subscriptionUpdate";
 	public static final String SIGNUP_PATH = "/signup";
 	
 	public static final String API_POSTFIX = "-api";
+	
+	public static final String TENANT_ID_PARAM = "tenantId";
 }

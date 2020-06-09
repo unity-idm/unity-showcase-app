@@ -37,7 +37,8 @@ public class InvocationContextUpdater
 	{
 		TenantDetails subscriptionFull = unityRestClient.getSubscriptionDetails(subscription);
 		context.setSubscription(subscriptionFull);
-		
+		Optional<TenantUser> usr = unityRestClient.getUser(subscription, getUserId(authentication));
+		context.setUser(usr.isPresent() ? usr.get() : null);
 		
 		List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authentication.getAuthorities());
 		if (subscriptionFull.isPremium())
@@ -47,11 +48,9 @@ public class InvocationContextUpdater
 		{
 			updatedAuthorities.remove(new SimpleGrantedAuthority(SecurityConfig.PREMIUM_AUTHORITY));
 		}
-
-		Optional<TenantUser> usr = unityRestClient.getUser(subscription, getUserId(authentication));
+	
 		if (usr.isPresent() && usr.get().isAdmin())
 		{
-			context.setUser(usr.get());
 			updatedAuthorities.add(new SimpleGrantedAuthority(SecurityConfig.ADMIN_AUTHORITY));
 		}else
 		{

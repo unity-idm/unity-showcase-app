@@ -36,20 +36,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
 	@Autowired
 	private Environment env;
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception
 	{
-		http.authorizeRequests(a -> a
-				.antMatchers("/", "/favicon.ico", "/login", "/logout/**", "/pricing", "/error",
-						"/webjars/**", "/access_denied", "/images/**", "/css/**", "/subscription")
-				.permitAll().anyRequest().authenticated())
-				.oauth2Login()
-				
-				.loginPage("/login")
-				.successHandler(successHandler()).and().logout().logoutSuccessUrl("/login").and()
-				.exceptionHandling().accessDeniedPage("/access_denied").and().csrf().disable().headers()
-				.referrerPolicy(ReferrerPolicy.SAME_ORIGIN);
+		http.authorizeRequests(a -> a.antMatchers("/", "/favicon.ico", "/login", "/logout/**", "/pricing",
+				"/error", "/webjars/**", "/access_denied", "/images/**", "/css/**", "/subscription")
+				.permitAll().anyRequest().authenticated()).oauth2Login()
+
+				.loginPage("/login").successHandler(successHandler()).and().logout()
+				.logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedPage("/access_denied")
+				.and().csrf().disable().headers().referrerPolicy(ReferrerPolicy.SAME_ORIGIN);
 
 	}
 
@@ -65,13 +62,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 			}
 		};
 	}
-	
+
 	@PostConstruct
 	private void configureSSL()
 	{
-		System.setProperty("javax.net.ssl.trustStore", env.getProperty("server.ssl.trust-store"));
-		System.setProperty("javax.net.ssl.trustStorePassword",
-				env.getProperty("server.ssl.trust-store-password"));
+		if (env.getProperty("server.ssl.trust-store") != null)
+		{
+			System.setProperty("javax.net.ssl.trustStore", env.getProperty("server.ssl.trust-store"));
+		}
+		if (env.getProperty("server.ssl.trust-store-password") != null)
+		{
+			System.setProperty("javax.net.ssl.trustStorePassword",
+					env.getProperty("server.ssl.trust-store-password"));
+		}
+		
 		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier()
 		{
 			public boolean verify(String hostname, SSLSession session)
