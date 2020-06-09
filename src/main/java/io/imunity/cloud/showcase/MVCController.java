@@ -6,9 +6,10 @@
 package io.imunity.cloud.showcase;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,28 +92,35 @@ public class MVCController
 	{
 		if ((change.isEmpty() || !change.get()) && context.getSubscription() != null)
 		{
-			return "redirect:application/notes";
+			return redirect("application/notes");
 		}
 
-		Map<String, String> subscriptions = new HashMap<>();
-		subscriptionMan.findAll().forEach(s -> {
-			if (s.getOwnerId().equals(InvocationContextUpdater.getUserId(authentication)))
-				subscriptions.put(s.getId(), s.getName());
-		});
-
-		if (subscriptions.size() == 0)
+		Map<String, String> filteredSubscriptions = getSubscriptions(authentication);
+		
+		if (filteredSubscriptions.size() == 0)
 		{
 			return "redirect:" + unityBaseUrl + "/" + tenantEndpoint + Constans.SIGNUP_PATH;
 		}
 
-		if (subscriptions.size() == 1)
+		if (filteredSubscriptions.size() == 1)
 		{
-			return selectSubscription(authentication, subscriptions.keySet().iterator().next(), request);
+			return selectSubscription(authentication, filteredSubscriptions.keySet().iterator().next(), request);
 		}
-		model.addAttribute("subs", subscriptions);
-		model.addAttribute("subscription", subscriptions.keySet().iterator().next());
+		model.addAttribute("subs", filteredSubscriptions);
+		model.addAttribute("subscription", filteredSubscriptions.keySet().iterator().next());
 
 		return "select_subscription";
+	}
+	
+	private Map<String, String> getSubscriptions(Authentication authentication)
+	{
+		Map<String, String> remoteSubscriptions = unityRestClient
+				.getSubscriptions(InvocationContextUpdater.getUserId(authentication));
+
+		return StreamSupport
+				.stream(subscriptionMan.findAll().spliterator(), false)
+				.filter(s -> remoteSubscriptions.keySet().contains(s.getId()))
+				.collect(Collectors.toMap(sub -> sub.getId(), sub -> sub.getName()));
 	}
 
 	@PostMapping("/selected-subscription")

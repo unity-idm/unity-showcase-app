@@ -29,11 +29,11 @@ public class NoteManagement
 	@Autowired
 	private NotesRepository notesRepo;
 
-	public List<Note> getNotes(String subsritpionId, String ownerId)
+	public List<Note> getNotes(String subscriptionId, String ownerId)
 	{
 
 		return StreamSupport.stream(notesRepo.findAll().spliterator(), false).filter(
-				n -> n.getOwnerId().equals(ownerId) && n.getSubscriptionId().equals(subsritpionId))
+				n -> n.getOwnerId().equals(ownerId) && n.getSubscriptionId().equals(subscriptionId))
 				.collect(Collectors.toList());
 	}
 
