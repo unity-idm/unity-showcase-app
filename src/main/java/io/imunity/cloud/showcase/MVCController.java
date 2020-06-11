@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,11 +46,11 @@ public class MVCController
 	private static final String REQUEST_URL = "URL_PRIOR_LOGIN";
 	private static final String SPRING_SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
 
-	@Value("${unity.tenantAdminRegistrationUrl}")
-	private String unityTenantAdminRegistrationUrl;
+	@Value("${unity.tenantAdminRegistrationUri}")
+	private String unityTenantAdminRegistrationUri;
 
-	@Value("${unity.baseurl}")
-	private String unityBaseUrl;
+	@Value("${unity.baseUri}")
+	private String unityBaseUri;
 
 	@Value("${unity.tenantEndpoint}")
 	private String tenantEndpoint;
@@ -73,12 +70,13 @@ public class MVCController
 	@Autowired
 	private InvocationContextUpdater secContextUpdater;
 
+	
 	@RequestMapping("/")
 	public String main(Model model)
 	{
 		if (context.getSubscription() == null)
 		{
-			model.addAttribute("registrationUrl", unityTenantAdminRegistrationUrl);
+			model.addAttribute("registrationUrl", unityTenantAdminRegistrationUri);
 			return "pricing";
 		} else
 		{
@@ -99,7 +97,7 @@ public class MVCController
 		
 		if (filteredSubscriptions.size() == 0)
 		{
-			return "redirect:" + unityBaseUrl + "/" + tenantEndpoint + Constans.SIGNUP_PATH;
+			return "redirect:" + unityBaseUri + "/" + tenantEndpoint + Constans.SIGNUP_PATH;
 		}
 
 		if (filteredSubscriptions.size() == 1)
@@ -251,9 +249,9 @@ public class MVCController
 			secContextUpdater.updateSecurityContext(authentication, id);
 		}
 
-		model.addAttribute("updateUrl", unityBaseUrl + "/" + tenantEndpoint
+		model.addAttribute("updateUrl", unityBaseUri + "/" + tenantEndpoint
 				+ Constans.PAYMENT_METHOD_UPDATE_PATH + "?" + Constans.TENANT_ID_PARAM + "=" + id);
-		model.addAttribute("upgradeUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SUBSCRIPTION_UPDATE_PATH
+		model.addAttribute("upgradeUrl", unityBaseUri + "/" + tenantEndpoint + Constans.SUBSCRIPTION_UPDATE_PATH
 				+ "?" + Constans.TENANT_ID_PARAM + "=" + id);
 		model.addAttribute("owner",
 				unityRestClient.getUser(id, context.getSubscription().tenant.creatorId).get());
@@ -326,7 +324,7 @@ public class MVCController
 	@GetMapping("/application/new")
 	public String applicationNew(Model model)
 	{
-		model.addAttribute("registrationUrl", unityBaseUrl + "/" + tenantEndpoint + Constans.SIGNUP_PATH);
+		model.addAttribute("registrationUrl", unityBaseUri + "/" + tenantEndpoint + Constans.SIGNUP_PATH);
 		return "application/new_subscription";
 	}
 
@@ -338,17 +336,6 @@ public class MVCController
 		DefaultSavedRequest savedRequest = (DefaultSavedRequest) session.getAttribute(SPRING_SAVED_REQUEST);
 		if (savedRequest != null)
 			request.getSession().setAttribute(REQUEST_URL, savedRequest.getRequestURI());
-		return "login";
-	}
-
-	@GetMapping("/logout")
-	public String logout(HttpServletRequest request, HttpServletResponse response)
-	{
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null)
-		{
-			new SecurityContextLogoutHandler().logout(request, response, auth);
-		}
 		return "login";
 	}
 

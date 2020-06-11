@@ -22,9 +22,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+
+import io.imunity.cloud.showcase.rest.UnityRestClient;
 
 @Configuration
 @EnableWebSecurity
@@ -36,16 +42,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
 	@Autowired
 	private Environment env;
-
+	
+	@Autowired
+	private OAuth2AuthorizedClientService oauthClientService;
+	
+	@Autowired
+	private UnityRestClient unityRestClient;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception
 	{
-		http.authorizeRequests(a -> a.antMatchers("/", "/favicon.ico", "/login", "/logout/**", "/pricing",
+		http.authorizeRequests(a -> a.antMatchers("/", "/favicon.ico", "/login", "/logout", "/pricing",
 				"/error", "/webjars/**", "/access_denied", "/images/**", "/css/**", "/subscription")
 				.permitAll().anyRequest().authenticated()).oauth2Login()
-
-				.loginPage("/login").successHandler(successHandler()).and().logout()
-				.logoutSuccessUrl("/login").and().exceptionHandling().accessDeniedPage("/access_denied")
+				.loginPage("/login")
+				.successHandler(successHandler())
+				.and()
+				.logout()
+				.addLogoutHandler(logoutHandler())
+				.logoutSuccessUrl("/login")
+				.and()
+				.exceptionHandling().accessDeniedPage("/access_denied")
 				.and().csrf().disable().headers().referrerPolicy(ReferrerPolicy.SAME_ORIGIN);
 
 	}
@@ -63,6 +80,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 		};
 	}
 
+	private LogoutHandler logoutHandler()
+	{
+		return new LogoutHandler()
+		{
+			@Override
+			public void logout(HttpServletRequest request, HttpServletResponse response,
+					Authentication authentication)
+			{
+				OAuth2AuthenticationToken oauthToken =
+						    (OAuth2AuthenticationToken) authentication;
+				
+				OAuth2AuthorizedClient client =
+						    oauthClientService.loadAuthorizedClient(
+						            oauthToken.getAuthorizedClientRegistrationId(),
+						            oauthToken.getName());
+
+				String accessToken = client.getAccessToken().getTokenValue();
+				unityRestClient.revokeToken(accessToken);
+			}
+		};
+	}
+	
 	@PostConstruct
 	private void configureSSL()
 	{

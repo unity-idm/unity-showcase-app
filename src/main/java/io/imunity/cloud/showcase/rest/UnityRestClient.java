@@ -22,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,7 +41,7 @@ import io.imunity.cloud.showcase.rest.types.TenantUser;
 @Component
 public class UnityRestClient
 {
-	@Value("${unity.baseurl}")
+	@Value("${unity.baseuri}")
 	private String unityBaseUrl;
 
 	@Value("${unity.tenantEndpoint}")
@@ -51,11 +53,17 @@ public class UnityRestClient
 	@Value("${unity.rest.client.password}")
 	private String unityRestClientPassword;
 
-	@Value("${unity.rest.url}")
+	@Value("${unity.rest.uri}")
 	private String unityRestUrl;
 
 	@Value("${unity.tenantUserRegistrationForm}")
 	private String unityTenantUserRegistrationForm;
+
+	@Value("${unity.oauth2.token-revoke-uri}")
+	private String tokenRevokeUri;
+
+	@Value("${spring.security.oauth2.client.registration.unity.clientId}")
+	private String oauthClient;
 
 	public Optional<TenantUser> getUser(String subscriptionId, String userId)
 	{
@@ -212,7 +220,28 @@ public class UnityRestClient
 		}
 	}
 
-	private RestTemplate getRestTemplate()
+	public void revokeToken(String token)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		map.add("token", token);
+		map.add("token_type_hint", "access_token");
+		map.add("client_id", oauthClient);
+		map.add("logout", "true");
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
+				headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity(tokenRevokeUri, request, String.class);
+		if (!(HttpStatus.OK.equals(response.getStatusCode())))
+		{
+			throw new RuntimeException("Communication with unity service error");
+		}
+	}
+
+	private RestTemplate getRestTemplateWithBasicAuthn()
 	{
 		return new RestTemplateBuilder().basicAuthentication(unityRestClientUsername, unityRestClientPassword)
 				.build();
@@ -220,8 +249,8 @@ public class UnityRestClient
 
 	private String requestToUnityRESTCloudService(String restUrl, HttpMethod method)
 	{
-		return requestToUnityRESTService(unityBaseUrl + "/" + tenantEndpoint + Constans.API_POSTFIX + "/", restUrl,
-				method, Optional.empty());
+		return requestToUnityRESTService(unityBaseUrl + "/" + tenantEndpoint + Constans.API_POSTFIX + "/",
+				restUrl, method, Optional.empty());
 	}
 
 	private String requestToUnityRESTService(String restUrl, HttpMethod method, Optional<String> entity)
@@ -234,7 +263,7 @@ public class UnityRestClient
 	{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		ResponseEntity<String> exchange = getRestTemplate().exchange(mainRestUrl + restUrl, method,
+		ResponseEntity<String> exchange = getRestTemplateWithBasicAuthn().exchange(mainRestUrl + restUrl, method,
 				entity.isPresent() ? new HttpEntity<String>(entity.get(), headers) : null,
 				String.class);
 

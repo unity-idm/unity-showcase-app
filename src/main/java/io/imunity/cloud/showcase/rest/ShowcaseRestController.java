@@ -20,7 +20,7 @@ import io.imunity.cloud.showcase.subscription.SubscriptionRepository;
 @RestController
 public class ShowcaseRestController
 {
-	private static String BEARER = "Bearer ";
+	private static final String BEARER = "Bearer ";
 
 	@Value("${rest.secret}")
 	private String secret;
