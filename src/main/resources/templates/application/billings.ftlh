@@ -8,7 +8,7 @@
             <h1 class="h2">Billings</h1>
             <#include "logout.ftlh">
          </div>
-         <div class="p-4 container">
+         <div class="container-fluid">
             <div class="row">
                <h4>Subscription</h4>
             </div>
