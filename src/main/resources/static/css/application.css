@@ -8,6 +8,12 @@ body {
   vertical-align: text-bottom;
 }
 
+.userProfileForm {
+	width: 300px
+}
+.notesAction {
+	width: 90px
+}
 /*
  * Sidebar
  */

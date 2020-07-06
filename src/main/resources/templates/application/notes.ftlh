@@ -25,8 +25,7 @@
             <tr>
               <th>Note title</th>
               <th>Note content</th>
- <!--         <th>Checked</th> -->
-              <th>Actions</th>
+              <th class="notesAction">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -34,7 +33,6 @@
               	<tr>
               		<td>${note.title!''}</td>
               		<td>${note.content}</td>
-<!--              	<td><input type="checkbox"></td>-->
            			<td> <a href="${'/application/note/' + note.id + '/edit'}">Edit</a> |
                    		 <a href="${'/application/note/' + note.id + '/delete'}">Delete</a>
                     </td> 
