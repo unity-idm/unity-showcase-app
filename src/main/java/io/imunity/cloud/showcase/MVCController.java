@@ -229,10 +229,18 @@ public class MVCController
 
 	@PreAuthorize("hasAuthority('ADMIN') && hasAuthority('ACTIVE_ACCOUNT')")
 	@GetMapping("/application/user/{userId}/delete")
-	public String applicationUser(Model model, @PathVariable String userId)
+	public RedirectView applicationUser(Model model, @PathVariable String userId, RedirectAttributes redir)
 	{
-		unityRestClient.deleteUser(context.getSubscription().tenant.id, userId);
-		return redirect("/application/users");
+		try
+		{
+			unityRestClient.deleteUser(context.getSubscription().tenant.id, userId);
+		}
+		catch (Exception ex)
+		{
+			redir.addFlashAttribute("errorMessage", ex.getMessage());
+		}
+		RedirectView redirectView = new RedirectView("/application/users", true);
+		return redirectView;
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

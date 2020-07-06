@@ -11,6 +11,10 @@
         <h1 class="h2">Users</h1>
         <#include "logout.ftlh">
       </div>	
+       	<#if errorMessage??>
+            <div class="alert alert-warning" role="alert">${errorMessage}</div>
+   	 	</#if>
+      	
       	<#if invitationEmail??>
       		 <div class="alert alert-success" role="alert">Invitation successfull send to ${invitationEmail}</div>
       	</#if>
