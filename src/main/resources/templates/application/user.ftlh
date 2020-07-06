@@ -16,7 +16,7 @@
       <#if updated??>
       		 <div class="alert alert-success" role="alert">Profile updated</div>
       </#if>
-      <div class="row p-4">		
+      <div class="userProfileForm p-4">		
 		<form action="/application/user" method="post">
 		   <div class="form-group">
 		    <label for="firstname">Firstname</label>

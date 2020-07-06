@@ -8,8 +8,8 @@
             <h1 class="h2">Billings</h1>
             <#include "logout.ftlh">
          </div>
-         <div class="container-fluid">
-            <div class="row">
+         <div class="container-fluid p-4">
+            <div>
                <h4>Subscription</h4>
             </div>
             <table class="table-sm table-borderless">
@@ -41,7 +41,7 @@
                   </tr>
                </tbody>
             </table>
-            <div class="row pt-3">
+            <div class="pt-3">
                <h4>Credit card</h4>
             </div>
             <table class="table-sm table-borderless">
@@ -54,7 +54,7 @@
                   </tr>
                </tbody>
             </table>
-            <div class="row pt-0">
+            <div class="pt-3">
                <h4>Invoices</h4>
             </div>
             <table class="table table-striped table-sm"">
