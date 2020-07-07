@@ -28,12 +28,9 @@ import io.imunity.cloud.showcase.rest.types.TenantUser;
 public class InvocationContextUpdater
 {
 	@Autowired
-	private InvocationContext context;
-	
-	@Autowired
 	private UnityRestClient unityRestClient;
 	
-	public void updateSecurityContext(Authentication authentication, String subscription)
+	public void updateSecurityContext(InvocationContext context, Authentication authentication, String subscription)
 	{
 		TenantDetails subscriptionFull = unityRestClient.getSubscriptionDetails(subscription);
 		context.setSubscription(subscriptionFull);

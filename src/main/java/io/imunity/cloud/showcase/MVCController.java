@@ -124,7 +124,7 @@ public class MVCController
 	@PostMapping("/selected-subscription")
 	public String selectSubscription(Authentication authentication, String subscription, HttpServletRequest request)
 	{
-		secContextUpdater.updateSecurityContext(authentication, subscription);
+		secContextUpdater.updateSecurityContext(context, authentication, subscription);
 		String urlPriorLogin = (String) request.getSession().getAttribute(REQUEST_URL);
 		return redirect((urlPriorLogin != null ? urlPriorLogin : "/application/notes"));
 	}
@@ -254,7 +254,7 @@ public class MVCController
 
 		if (!updatePaymentMethod.isEmpty() || !update.isEmpty())
 		{
-			secContextUpdater.updateSecurityContext(authentication, id);
+			secContextUpdater.updateSecurityContext(context, authentication, id);
 		}
 
 		model.addAttribute("updateUrl", unityBaseUri + "/" + tenantEndpoint
@@ -273,7 +273,7 @@ public class MVCController
 	public String cancelSubscription(Authentication authentication)
 	{
 		unityRestClient.cancelSubscription(context.getSubscriptionId());
-		secContextUpdater.updateSecurityContext(authentication, context.getSubscriptionId());
+		secContextUpdater.updateSecurityContext(context, authentication, context.getSubscriptionId());
 		return redirect("/application/billings");
 	}
 
@@ -282,7 +282,7 @@ public class MVCController
 	public String renewSubscription(Authentication authentication)
 	{
 		unityRestClient.renewSubscription(context.getSubscription().tenant.id);
-		secContextUpdater.updateSecurityContext(authentication, context.getSubscriptionId());
+		secContextUpdater.updateSecurityContext(context, authentication, context.getSubscriptionId());
 		return redirect("/application/billings");
 	}
 
