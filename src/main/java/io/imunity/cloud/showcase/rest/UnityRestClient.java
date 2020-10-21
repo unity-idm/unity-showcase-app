@@ -5,6 +5,8 @@
 
 package io.imunity.cloud.showcase.rest;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import io.imunity.cloud.showcase.Constans;
 import io.imunity.cloud.showcase.rest.types.Attribute;
+import io.imunity.cloud.showcase.rest.types.Entity;
 import io.imunity.cloud.showcase.rest.types.InvitationParam;
 import io.imunity.cloud.showcase.rest.types.Invoice;
 import io.imunity.cloud.showcase.rest.types.Tenant;
@@ -163,20 +166,51 @@ public class UnityRestClient
 		return invoices;
 	}
 
-	public void addInvitation(String email, String subscriptionGroup)
+	public boolean addToGroupOrInvite(String email, String subscriptionGroup)
 	{
+		Entity entity = null;
 		try
 		{
-			InvitationParam param = new InvitationParam(unityTenantUserRegistrationForm,
-					Instant.now().plus(5, ChronoUnit.DAYS).toEpochMilli(), email,
-					subscriptionGroup + "/users");
-			String code = requestToUnityRESTService("invitation/", HttpMethod.POST,
-					Optional.of(Constans.MAPPER.writeValueAsString(param)));
-			requestToUnityRESTService("invitation/" + code + "/send", HttpMethod.POST, Optional.empty());
+			entity = Constans.MAPPER
+					.readValue(requestToUnityRESTService("entity/" + email + "?identityType=email",
+							HttpMethod.GET, Optional.empty()), Entity.class);
+
 		} catch (Exception e)
 		{
-			throw new RuntimeException("Can not add invitation", e);
+			// ok
 		}
+
+		if (entity == null)
+		{
+			try
+			{
+				InvitationParam param = new InvitationParam(unityTenantUserRegistrationForm,
+						Instant.now().plus(5, ChronoUnit.DAYS).toEpochMilli(), email,
+						subscriptionGroup + "/users");
+				String code = requestToUnityRESTService("invitation/", HttpMethod.POST,
+						Optional.of(Constans.MAPPER.writeValueAsString(param)));
+				requestToUnityRESTService("invitation/" + code + "/send", HttpMethod.POST,
+						Optional.empty());
+				return true;
+			} catch (Exception e)
+			{
+				throw new RuntimeException("Can not add invitation", e);
+			}
+		} else
+		{
+			try
+			{
+				requestToUnityRESTService(
+						"group/" + URLEncoder.encode(subscriptionGroup + "/users", "UTF-8")
+								+ "/entity/"
+								+ entity.getEntityInformation().getEntityId(),
+						HttpMethod.POST, Optional.empty());
+			} catch (Exception e)
+			{
+				throw new RuntimeException("Can not add user to group", e);
+			}
+		}
+		return false;
 
 	}
 
@@ -263,7 +297,8 @@ public class UnityRestClient
 	{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		ResponseEntity<String> exchange = getRestTemplateWithBasicAuthn().exchange(mainRestUrl + restUrl, method,
+		URI uri = URI.create(mainRestUrl + restUrl);
+		ResponseEntity<String> exchange = getRestTemplateWithBasicAuthn().exchange(uri, method,
 				entity.isPresent() ? new HttpEntity<String>(entity.get(), headers) : null,
 				String.class);
 

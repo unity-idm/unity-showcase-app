@@ -298,9 +298,10 @@ public class MVCController
 	@PostMapping("/application/user/invite")
 	public RedirectView applicationUserInvite(String email, RedirectAttributes redir)
 	{
-		unityRestClient.addInvitation(email, context.getSubscription().tenant.group);
+		boolean invited = unityRestClient.addToGroupOrInvite(email, context.getSubscription().tenant.group);
 		RedirectView redirectView = new RedirectView("/application/users", true);
 		redir.addFlashAttribute("invitationEmail", email);
+		redir.addFlashAttribute("invited", invited);
 		return redirectView;
 	}
 

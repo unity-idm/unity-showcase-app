@@ -16,7 +16,11 @@
    	 	</#if>
       	
       	<#if invitationEmail??>
-      		 <div class="alert alert-success" role="alert">Invitation successfull send to ${invitationEmail}</div>
+      		<#if invited>
+      		   <div class="alert alert-success" role="alert">Invitation successfull send to ${invitationEmail}</div>
+      		<#else>
+      		   <div class="alert alert-success" role="alert">User ${invitationEmail} successfull added</div>
+      		</#if> 
       	</#if>
 		<form action="/application/user/invite" method="post">
 		<div class="input-group float-right col-md-4 pr-4 pl-4">
