@@ -26,8 +26,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -91,7 +94,7 @@ public class UnityRestClient
 		return users;
 	}
 
-	public void deleteUser(String subscriptionId, String userId)
+	public void deleteUser(String subscriptionId, String userId) throws Exception
 	{
 		requestToUnityRESTCloudService("user/" + subscriptionId + "/" + userId, HttpMethod.DELETE);
 	}
@@ -236,7 +239,7 @@ public class UnityRestClient
 		}
 	}
 
-	public void updateStringRootAttribute(String entityId, String name, String value)
+	public void updateStringRootAttribute(String entityId, String name, String value) throws Exception
 	{
 		Attribute a = new Attribute();
 		a.setName(name);
@@ -281,26 +284,34 @@ public class UnityRestClient
 				.build();
 	}
 
-	private String requestToUnityRESTCloudService(String restUrl, HttpMethod method)
+	private String requestToUnityRESTCloudService(String restUrl, HttpMethod method) throws Exception
 	{
 		return requestToUnityRESTService(unityBaseUrl + "/" + tenantEndpoint + Constans.API_POSTFIX + "/",
 				restUrl, method, Optional.empty());
 	}
 
-	private String requestToUnityRESTService(String restUrl, HttpMethod method, Optional<String> entity)
+	private String requestToUnityRESTService(String restUrl, HttpMethod method, Optional<String> entity) throws Exception
 	{
 		return requestToUnityRESTService(unityRestUrl, restUrl, method, entity);
 	}
 
 	private String requestToUnityRESTService(String mainRestUrl, String restUrl, HttpMethod method,
-			Optional<String> entity)
+			Optional<String> entity) throws Exception
 	{
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		URI uri = URI.create(mainRestUrl + restUrl);
-		ResponseEntity<String> exchange = getRestTemplateWithBasicAuthn().exchange(uri, method,
-				entity.isPresent() ? new HttpEntity<String>(entity.get(), headers) : null,
-				String.class);
+		
+		ResponseEntity<String> exchange;
+		try
+		{
+			exchange = getRestTemplateWithBasicAuthn().exchange(uri, method,
+					entity.isPresent() ? new HttpEntity<String>(entity.get(), headers) : null,
+					String.class);
+		} catch (HttpClientErrorException ex)
+		{
+			throw Constans.MAPPER.readValue(ex.getResponseBodyAsString(), UnityException.class);
+		}
 
 		if (!(HttpStatus.OK.equals(exchange.getStatusCode())
 				|| HttpStatus.NO_CONTENT.equals(exchange.getStatusCode())))
@@ -309,5 +320,17 @@ public class UnityRestClient
 		}
 
 		return exchange.getBody();
+	}
+	
+	public static class UnityException extends Exception
+	{
+		public final String error;
+		
+		@JsonCreator
+		public UnityException(@JsonProperty("message") String message,@JsonProperty("error") String error)
+		{
+			super(message);
+			this.error = error;
+		}
 	}
 }

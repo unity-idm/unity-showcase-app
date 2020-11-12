@@ -42,7 +42,7 @@ public class NoteManagement
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		boolean authorized = authorities.contains(new SimpleGrantedAuthority(SecurityConfig.PREMIUM_AUTHORITY));
-		if (getNotes(note.getSubscriptionId(), note.getOwnerId()).size() > LIGHT_NOTES_LIMIT && !authorized)
+		if (getNotes(note.getSubscriptionId(), note.getOwnerId()).size() >= LIGHT_NOTES_LIMIT && !authorized)
 			throw new AccessDeniedException(
 					"Only premium users may have more than " + LIGHT_NOTES_LIMIT + " notes");
 		notesRepo.save(note);

@@ -35,6 +35,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import io.imunity.cloud.showcase.notes.Note;
 import io.imunity.cloud.showcase.notes.NoteManagement;
 import io.imunity.cloud.showcase.rest.UnityRestClient;
+import io.imunity.cloud.showcase.rest.UnityRestClient.UnityException;
 import io.imunity.cloud.showcase.rest.types.TenantUser;
 import io.imunity.cloud.showcase.subscription.SubscriptionRepository;
 
@@ -235,9 +236,18 @@ public class MVCController
 		{
 			unityRestClient.deleteUser(context.getSubscription().tenant.id, userId);
 		}
-		catch (Exception ex)
+		catch (UnityException e)
 		{
-			redir.addFlashAttribute("errorMessage", ex.getMessage());
+			if (e.error.equals("IllegalIdentityValueException"))
+			{
+				redir.addFlashAttribute("errorMessage", "Can not remove last admin");
+			}
+			else {
+				redir.addFlashAttribute("errorMessage", e.getMessage());
+			}
+		} catch (Exception e)
+		{
+			redir.addFlashAttribute("errorMessage", e.getMessage());
 		}
 		RedirectView redirectView = new RedirectView("/application/users", true);
 		return redirectView;
@@ -323,8 +333,15 @@ public class MVCController
 	@PostMapping("/application/user")
 	public RedirectView applicationUserUpdate(String firstname, String surname, RedirectAttributes redir)
 	{
-		unityRestClient.updateStringRootAttribute(context.getUserId(), Constans.FIRSTNAME_ATTR, firstname);
-		unityRestClient.updateStringRootAttribute(context.getUserId(), Constans.SURNAME_ATTR, surname);
+		try
+		{
+			unityRestClient.updateStringRootAttribute(context.getUserId(), Constans.FIRSTNAME_ATTR, firstname);
+			unityRestClient.updateStringRootAttribute(context.getUserId(), Constans.SURNAME_ATTR, surname);
+		} catch (Exception e)
+		{
+			redir.addFlashAttribute("errorMessage", e.getMessage());
+		}
+		
 		redir.addFlashAttribute("updated", true);
 		RedirectView redirectView = new RedirectView("/application/user", true);
 		return redirectView;
